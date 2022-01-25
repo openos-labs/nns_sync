@@ -1,0 +1,41 @@
+[
+    {
+        "canister_id": "rwlgt-iiaaa-aaaaa-aaaaa-cai",
+        "canister_type": "registry"
+    },
+    {
+        "canister_id": "rrkah-fqaaa-aaaaa-aaaaq-cai",
+        "canister_type": "governance"
+    },
+    {
+        "canister_id": "ryjl3-tyaaa-aaaaa-aaaba-cai",
+        "canister_type": "ledger"
+    },
+    {
+        "canister_id": "r7inp-6aaaa-aaaaa-aaabq-cai",
+        "canister_type": "root"
+    },
+    {
+        "canister_id": "rkp4c-7iaaa-aaaaa-aaaca-cai",
+        "canister_type": "cmc"
+    },
+    {
+        "canister_id": "rno2w-sqaaa-aaaaa-aaacq-cai",
+        "canister_type": "lifeline"
+    },
+    {
+        "canister_id": "renrk-eyaaa-aaaaa-aaada-cai",
+        "canister_type": "gtc"
+    },
+    {
+        "canister_id": "rdmx6-jaaaa-aaaaa-aaadq-cai",
+        "canister_type": "identity"
+    },{
+        "canister_id": "qoctq-giaaa-aaaaa-aaaea-cai",
+        "canister_type": "nns-ui"
+    },
+    {
+        "canister_id": "qjdve-lqaaa-aaaaa-aaaeq-cai",
+        "canister_type": "archive"
+    }
+]

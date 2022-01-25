@@ -1,0 +1,10 @@
+service : () -> {
+  add_nns_canister : () -> ();
+  canister_status : () -> ();
+  change_nns_canister : () -> ();
+  get_pending_root_proposals_to_upgrade_governance_canister : () -> ();
+  stop_or_start_nns_canister : () -> ();
+  submit_change_nns_canister_proposal : () -> ();
+  submit_root_proposal_to_upgrade_governance_canister : () -> ();
+  vote_on_root_proposal_to_upgrade_governance_canister : () -> ();
+}

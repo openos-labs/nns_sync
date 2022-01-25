@@ -1,0 +1,6 @@
+service : () -> {
+  current_authz : () -> () query;
+  get_changes_since : () -> () query;
+  get_value : () -> () query;
+  update_authz : () -> ();
+}
