@@ -18,3 +18,5 @@ ic-types = { git="https://github.com/dfinity/ic" }
 ic-registry-transport = { git="https://github.com/dfinity/ic" }
 ic-registry-keys = { git="https://github.com/dfinity/ic" }
 ic-nns-constants = { git="https://github.com/dfinity/ic" }
+ic-nns-common = { git="https://github.com/dfinity/ic" }
+ic-base-types = { git="https://github.com/dfinity/ic" }
