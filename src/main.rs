@@ -61,9 +61,9 @@ async fn main() {
     // registry::catch_up_package_contents(&agent).await;
 
     // 获取子网的成员（节点），以及一些其他的
-    registry::subnet_record(&agent).await;
+    // registry::subnet_record(&agent).await;
 
-
+    registry::nns_canister_records(&agent).await;
 }
 
 

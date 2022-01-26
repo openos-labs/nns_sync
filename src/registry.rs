@@ -4,7 +4,8 @@ use ic_registry_keys::{make_icp_xdr_conversion_rate_record_key, make_subnet_list
     make_firewall_config_record_key, make_provisional_whitelist_record_key,
     make_node_operator_record_key, make_crypto_tls_cert_key, make_node_record_key,
     make_data_center_record_key, make_crypto_threshold_signing_pubkey_key,
-    make_catch_up_package_contents_key, make_subnet_record_key};
+    make_catch_up_package_contents_key, make_subnet_record_key, make_nns_canister_records_key
+    };
 use ic_registry_transport::pb::v1::{RegistryGetValueRequest, RegistryGetValueResponse};
 use ic_protobuf::registry::{
     subnet::v1::{SubnetListRecord, SubnetRecord, CatchUpPackageContents}, routing_table::v1::RoutingTable, 
@@ -13,7 +14,7 @@ use ic_protobuf::registry::{
     firewall::v1::FirewallConfig, provisional_whitelist::v1::ProvisionalWhitelist,
     node_operator::v1::NodeOperatorRecord,crypto::v1::{X509PublicKeyCert, PublicKey},
     node::v1::NodeRecord, dc::v1::DataCenterRecord,
-
+    nns::v1::NnsCanisterRecords,
 };
 use ic_nns_constants::{REGISTRY_CANISTER_ID};
 use ic_nns_common::registry::get_icp_xdr_conversion_rate_record;
@@ -229,3 +230,14 @@ pub async fn subnet_record(agent: &Agent) {
     value.max_instructions_per_round, value.max_instructions_per_install_code, value.features, value.max_number_of_canisters, 
     value.ssh_readonly_access, value.ssh_backup_access, value.ecdsa_config);
 }
+
+pub async fn nns_canister_records(agent: &Agent) {
+    let response = get_value(agent, make_nns_canister_records_key()).await
+    .expect("routing_table_record error");
+
+    let value = NnsCanisterRecords::decode(&response.value[..]).expect("Decode unassigned nodes config error");
+
+    println!("{:?}\n", value);
+}
+
+
