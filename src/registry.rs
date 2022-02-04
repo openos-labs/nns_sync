@@ -19,7 +19,7 @@ use ic_protobuf::registry::{
 use ic_nns_constants::{REGISTRY_CANISTER_ID};
 use ic_nns_common::registry::get_icp_xdr_conversion_rate_record;
 use ic_base_types::{PrincipalId, SubnetId, NodeId};
-use ic_agent::{Agent};
+use ic_agent::Agent;
 use candid::Principal;
 use prost::Message;
 use std::convert::{TryInto, TryFrom};

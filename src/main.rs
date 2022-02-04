@@ -44,7 +44,7 @@ async fn main() {
     // registry::provisional_whitelist_record(&agent).await;
 
     // 获取 node operator 信息，包括数据中心 id，operator id，provide id，rewardable_node，需要传入 operator id
-    // registry::node_operator_record(&agent).await;
+    registry::node_operator_record(&agent).await;
     // 获取某个节点的 X509 public key Cert，需要传入节点 id
     // registry::crypto_tls_cert(&agent).await;
     
@@ -63,7 +63,7 @@ async fn main() {
     // 获取子网的成员（节点），以及一些其他的
     // registry::subnet_record(&agent).await;
 
-    registry::nns_canister_records(&agent).await;
+    // registry::nns_canister_records(&agent).await;
 }
 
 
