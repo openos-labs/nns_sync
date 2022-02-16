@@ -29,6 +29,7 @@ use crate::types::{Error, LOGFIX};
 
 async fn get_value(agent: &Agent, key: String) -> Result<RegistryGetValueResponse, Error> {
     let request_key = key.as_bytes().to_vec();
+    println!("{:?}", request_key);
     let request = RegistryGetValueRequest {
         version: None,
         key: request_key,
@@ -52,8 +53,11 @@ async fn get_value(agent: &Agent, key: String) -> Result<RegistryGetValueRespons
 }
 
 pub async fn icp_xdr_conversion_rate_record(agent: &Agent) {
-    let response = get_value(agent, make_icp_xdr_conversion_rate_record_key()).await
+    // let response = get_value(agent, make_icp_xdr_conversion_rate_record_key()).await
+    let response = get_value(agent, "xdr_per_icp".to_string()).await
     .expect("icp_xdr_conversion_rate_record error");
+
+    // let response = ic_nns_common::registry::get_icp_xdr_conversion_rate_record().await;
     println!("icp_xdr_conversion_rate_record:\n{:?}", response);
 }
 
