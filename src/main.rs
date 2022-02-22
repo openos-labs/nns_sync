@@ -4,6 +4,7 @@ use ic_agent::{
 };
 use ic_protobuf::registry::routing_table::v1::RoutingTable;
 use ic_registry_transport::pb::v1::{RegistryGetValueResponse, RegistryGetValueRequest};
+use ledger_canister::EncodedBlock;
 use prost::Message;
 
 mod types;
@@ -67,12 +68,13 @@ async fn main() {
     // 创世纪用得，现在清空了
     // registry::nns_canister_records(&agent).await;
 
-    // 获取 Ledger 里面的 block
-    let a = ledger::block_pb(&agent, 0).await;
-    let b = ledger::block_pb(&agent, 2598941).await;
-    let c = ledger::block_pb(&agent, 1000_000).await;
-
-    print!("{:?}\n{:?}\n{:?}", a, b, c);
+    // 获取 Ledger 或者 archieve node 里面的单个 block。index 为 2599652
+    let a = ledger::block_pb(&agent, 2599652).await;
+    println!("{:?}", a);
+    
+    // 获取 archieve node 里面的多个 block，范围是 [0,1999] 共 2000 个。
+    let b  = ledger::get_blocks_pb(&agent, 0, 2000).await;
+    println!("{:?}", b);
 }
 
 

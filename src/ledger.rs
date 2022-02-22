@@ -2,7 +2,7 @@ use candid::Principal;
 use ic_nns_constants::{LEDGER_CANISTER_ID};
 use ic_agent::Agent;
 use ledger_canister::{
-    Block, BlockHeight, BlockRes
+    Block, BlockHeight, BlockRes, GetBlocksArgs, GetBlocksRes, EncodedBlock
 };
 use crate::types::{Error, LOGFIX, query};
 
@@ -66,3 +66,15 @@ pub async fn block_pb(agent: &Agent, height: BlockHeight) -> Result<Block, Strin
     };
     Ok(block)
 }
+
+pub async fn get_blocks_pb(agent: &Agent, start: u64, length: usize) -> Vec<Block> {
+    let args = GetBlocksArgs {
+        start,
+        length,
+    };
+    let response: Result<GetBlocksRes, String> = query(agent, Principal::from_text("qjdve-lqaaa-aaaaa-aaaeq-cai").expect("principal from archive canister err."), "get_blocks_pb", args).await;
+    let encode_blocks = response.expect("get_blocks_pb call error.").0.expect("decode Vec<Block> error.");
+    encode_blocks.into_iter().map(|b| b.decode().unwrap()).collect()
+}
+
+
