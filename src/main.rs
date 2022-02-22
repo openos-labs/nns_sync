@@ -8,6 +8,7 @@ use prost::Message;
 
 mod types;
 mod registry;
+mod ledger;
 
 const DEFAULT_IC_GATEWAY: &str = "https://ic0.app";
 
@@ -23,7 +24,7 @@ async fn main() {
         .expect("Failed to build the Agent");
     // registry::icp_xdr_conversion_rate_record(&agent).await;
    
-    registry::routing_table_record(&agent).await;
+    // registry::routing_table_record(&agent).await;
     
     // 获取所有的 subnet id。30 个。
     // registry::subnet_list_record(&agent).await;
@@ -54,7 +55,7 @@ async fn main() {
     // 获取某个数据中心数据
     // registry::data_center_record(&agent).await;
     
-    // 获取某个子网的 bls 门限公钥
+    // 获取某个子网的 bls 公钥
     // registry::crypto_threshold_signing_pubkey(&agent).await;
 
     // 获取 DKG transcript 初始值
@@ -62,8 +63,16 @@ async fn main() {
 
     // 获取子网的成员（节点），以及一些其他的
     // registry::subnet_record(&agent).await;
-
+    
+    // 创世纪用得，现在清空了
     // registry::nns_canister_records(&agent).await;
+
+    // 获取 Ledger 里面的 block
+    let a = ledger::block_pb(&agent, 0).await;
+    let b = ledger::block_pb(&agent, 2598941).await;
+    let c = ledger::block_pb(&agent, 1000_000).await;
+
+    print!("{:?}\n{:?}\n{:?}", a, b, c);
 }
 
 

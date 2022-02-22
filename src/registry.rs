@@ -17,7 +17,6 @@ use ic_protobuf::registry::{
     nns::v1::NnsCanisterRecords,
 };
 use ic_nns_constants::{REGISTRY_CANISTER_ID};
-use ic_nns_common::registry::get_icp_xdr_conversion_rate_record;
 use ic_base_types::{PrincipalId, SubnetId, NodeId};
 use ic_agent::Agent;
 use candid::Principal;
@@ -221,12 +220,7 @@ pub async fn subnet_record(agent: &Agent) {
         .map(|v| Principal::from_slice(v).to_text())
         .collect();
     
-    println!("membership: {:?}\nmax_ingress_bytes_per_message: {:?}\n
-    unit_delay_millis: {:?}\ninitial_notary_delay_millis: {:?}\nreplica_version_id: {:?}\n
-    dkg_interval_length: {}\ngossip_config: {:?}\nstart_as_nns: {}\nsubnet_type: {}\ndkg_dealings_per_block: {}\n
-    is_halted: {}\nmax_ingress_messages_per_block: {}\nmax_block_payload_size: {}\nmax_instructions_per_message: {}\n
-    max_instructions_per_round: {}\nmax_instructions_per_install_code: {}\nfeatures: {:?}\nmax_number_of_canisters: {}\n
-    ssh_readonly_access: {:?}\nssh_backup_access: {:?}\necdsa_config: {:?}", 
+    println!("membership: {:?}\nmax_ingress_bytes_per_message: {:?}\nunit_delay_millis: {:?}\ninitial_notary_delay_millis: {:?}\nreplica_version_id: {:?}\ndkg_interval_length: {}\ngossip_config: {:?}\nstart_as_nns: {}\nsubnet_type: {}\ndkg_dealings_per_block: {}\nis_halted: {}\nmax_ingress_messages_per_block: {}\nmax_block_payload_size: {}\nmax_instructions_per_message: {}\nmax_instructions_per_round: {}\nmax_instructions_per_install_code: {}\nfeatures: {:?}\nmax_number_of_canisters: {}\nssh_readonly_access: {:?}\nssh_backup_access: {:?}\necdsa_config: {:?}", 
     membership.len(), value.max_ingress_bytes_per_message,
     value.unit_delay_millis, value.initial_notary_delay_millis, value.replica_version_id, 
     value.dkg_interval_length, value.gossip_config, value.start_as_nns, value.subnet_type, value.dkg_dealings_per_block, 

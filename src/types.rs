@@ -1,4 +1,9 @@
 use serde::{Deserialize, Serialize};
+use candid::Principal;
+use dfn_protobuf::{ProtoBuf, ToProto};
+use ic_types::CanisterId;
+use ic_agent::Agent;
+use on_wire::{FromWire, IntoWire};
 
 pub const LOGFIX: &str = "================================================================================================";
 
@@ -13,3 +18,18 @@ pub enum Error {
     UnknownError(String),
 }
 
+pub async fn query<Payload: ToProto, Res: ToProto>(
+    agent: &Agent,
+    canister_id: Principal,
+    method: &str, 
+    payload: Payload,
+) -> Result<Res, String> {
+    let arg = ProtoBuf(payload).into_bytes()?;
+    let bytes = agent
+        .query(&canister_id, method)
+        .with_arg(arg)
+        .call()
+        .await
+        .expect("query pb interface error.");
+    ProtoBuf::from_bytes(bytes).map(|c| c.0)
+}

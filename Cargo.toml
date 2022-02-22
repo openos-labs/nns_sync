@@ -13,6 +13,9 @@ candid = "0.7.10"
 ic-agent = "0.11.1"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.8.1", features = ["full"] }
+dfn_protobuf = { git="https://github.com/dfinity/ic" }
+on_wire = { git="https://github.com/dfinity/ic" }
+ledger-canister = { git="https://github.com/dfinity/ic" }
 ic-protobuf = { git="https://github.com/dfinity/ic" }
 ic-types = { git="https://github.com/dfinity/ic" }
 ic-registry-transport = { git="https://github.com/dfinity/ic" }
@@ -20,3 +23,4 @@ ic-registry-keys = { git="https://github.com/dfinity/ic" }
 ic-nns-constants = { git="https://github.com/dfinity/ic" }
 ic-nns-common = { git="https://github.com/dfinity/ic" }
 ic-base-types = { git="https://github.com/dfinity/ic" }
+
