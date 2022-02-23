@@ -3,9 +3,11 @@ name = "nns_sync"
 version = "0.1.0"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+mysql = "*"
+diesel = { version = "1.4.4", features = ["mysql"] }
+dotenv = "0.15.0"
 hex = "0.4.3"
 prost = "0.9.0"
 serde_json = "1.0"
@@ -23,4 +25,12 @@ ic-registry-keys = { git="https://github.com/dfinity/ic" }
 ic-nns-constants = { git="https://github.com/dfinity/ic" }
 ic-nns-common = { git="https://github.com/dfinity/ic" }
 ic-base-types = { git="https://github.com/dfinity/ic" }
+rbson = "2.0"
 
+# logging lib(required)
+log = "0.4"
+fast_log="1.3"
+
+# rbatis (required) default is all-database+runtime-async-std-rustls
+rbatis =  { version = "3.0" } 
+async-std = {version = "1", feature = ["attributes","tokio1"]}

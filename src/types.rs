@@ -1,9 +1,10 @@
-use serde::{Deserialize, Serialize};
 use candid::Principal;
 use dfn_protobuf::{ProtoBuf, ToProto};
-use ic_types::CanisterId;
 use ic_agent::Agent;
+use ic_types::CanisterId;
 use on_wire::{FromWire, IntoWire};
+use rbatis::{crud::CRUD, crud_table};
+use serde::{Deserialize, Serialize};
 
 pub const LOGFIX: &str = "================================================================================================";
 
@@ -21,7 +22,7 @@ pub enum Error {
 pub async fn query<Payload: ToProto, Res: ToProto>(
     agent: &Agent,
     canister_id: Principal,
-    method: &str, 
+    method: &str,
     payload: Payload,
 ) -> Result<Res, String> {
     let arg = ProtoBuf(payload).into_bytes()?;
@@ -32,4 +33,19 @@ pub async fn query<Payload: ToProto, Res: ToProto>(
         .await
         .expect("query pb interface error.");
     ProtoBuf::from_bytes(bytes).map(|c| c.0)
+}
+
+#[crud_table(table_name:"transactions" | table_columns:"id,hash,blockhash,type_,createdtime,from_,to_,amount,fee,memo")]
+#[derive(Clone, Debug)]
+pub struct Transaction {
+    pub id: u64,
+    pub hash: String,
+    pub blockhash: String,
+    pub type_: String,
+    pub createdtime: u64,
+    pub from_: String,
+    pub to_: String,
+    pub amount: u64,
+    pub fee: u64,
+    pub memo: String,
 }
