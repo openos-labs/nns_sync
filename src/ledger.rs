@@ -2,7 +2,7 @@ use candid::Principal;
 use ic_nns_constants::{LEDGER_CANISTER_ID};
 use ic_agent::Agent;
 use ledger_canister::{
-    Block, BlockHeight, BlockRes, GetBlocksArgs, GetBlocksRes, EncodedBlock
+    Block, BlockHeight, BlockRes, GetBlocksArgs, GetBlocksRes, EncodedBlock, TipOfChainRes
 };
 use crate::types::{Error, LOGFIX, query};
 
@@ -77,4 +77,8 @@ pub async fn get_blocks_pb(agent: &Agent, start: u64, length: usize) -> Vec<Bloc
     encode_blocks.into_iter().map(|b| b.decode().unwrap()).collect()
 }
 
+pub async fn tip_of_chain_pb(agent: &Agent) -> TipOfChainRes {
+    let response: Result<TipOfChainRes, String> = query(agent, LEDGER_CANISTER_ID.get().0, "tip_of_chain_pb", ()).await;
+    response.unwrap()
+}
 

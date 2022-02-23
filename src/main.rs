@@ -75,6 +75,10 @@ async fn main() {
     // 获取 archieve node 里面的多个 block，范围是 [0,1999] 共 2000 个。
     let b  = ledger::get_blocks_pb(&agent, 0, 2000).await;
     println!("{:?}", b);
+
+    // 获取 Ledger 最新高度
+    let c = ledger::tip_of_chain_pb(&agent).await;
+    println!("{:}", c.tip_index);
 }
 
 
