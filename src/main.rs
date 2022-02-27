@@ -27,7 +27,7 @@ use std::{thread, time};
 use tokio::task::JoinHandle;
 const DEFAULT_IC_GATEWAY: &str = "https://ic0.app";
 
-pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
+pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) -> u8 {
     //     let stmt = conn.prep("INSERT INTO transactions_test (id, hash, blockhash, type_, createdtime, from_, to_, amount, fee, memo) VALUES (:id, :hash, :blockhash, :type_, :createdtime, :from_, :to_, :amount, :fee, :memo)")
     //  .unwrap();
     //     for i in 0..data.len() {
@@ -48,7 +48,13 @@ pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
     //         )
     //         .unwrap()
     //     }
-    conn.save_batch(&data, &[]).await;
+    let result = conn.save_batch(&data, &[]).await;
+    if let Ok(_) = result {
+        1
+    } else {
+        println!("insert to mysql error, {:?}, retrying...", result);
+        0
+    }
     //println!("last generated key: {}")
 }
 pub fn get_block_height(conn: &mut PooledConn) -> u64 {
@@ -168,12 +174,17 @@ async fn main() {
             }
             let mut data = (*(set_arc.read().unwrap())).clone();
             let l = data.len();
-            insert_to_mysql(data, &rb).await;
-            height = height + l as u64;
-            println!("sync to {:?} blocks...", height);
             if l as u64 != num_thread {
                 println!("thread error...num not match, pre heigh {:?}", height);
+                continue;
             }
+
+            let result = insert_to_mysql(data, &rb).await;
+            if result == 0 {
+                continue;
+            }
+            height = height + l as u64;
+            println!("sync to {:?} blocks...", height);
         }
     }
     //println!("{:?}", b);
