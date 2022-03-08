@@ -26,13 +26,12 @@ pub async fn query<Payload: ToProto, Res: ToProto>(
     payload: Payload,
 ) -> Result<Res, String> {
     let arg = ProtoBuf(payload).into_bytes()?;
-    let bytes = agent
-        .query(&canister_id, method)
-        .with_arg(arg)
-        .call()
-        .await
-        .expect("query pb interface error.");
-    ProtoBuf::from_bytes(bytes).map(|c| c.0)
+    let bytes = agent.query(&canister_id, method).with_arg(arg).call().await;
+    if let Ok(bytes_value) = bytes {
+        ProtoBuf::from_bytes(bytes_value).map(|c| c.0)
+    } else {
+        Err("query error".to_string())
+    }
 }
 
 #[crud_table(table_name:"transactions" | table_columns:"id,hash,blockhash,type_,createdtime,from_,to_,amount,fee,memo")]

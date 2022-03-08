@@ -79,21 +79,28 @@ pub async fn get_blocks_pb(agent: &Agent, start: u64, length: usize) -> Option<V
         args,
     )
     .await;
-    let encode_blocks_result = response.expect("get_blocks_pb call error.").0;
-    if let Ok(encode_blocks) = encode_blocks_result {
-        Some(
-            encode_blocks
-                .into_iter()
-                .map(|b| b.decode().unwrap())
-                .collect(),
-        )
+    if let Ok(encode_blocks_result) = response {
+        if let Ok(encode_blocks) = encode_blocks_result.0 {
+            Some(
+                encode_blocks
+                    .into_iter()
+                    .map(|b| b.decode().unwrap())
+                    .collect(),
+            )
+        } else {
+            None
+        }
     } else {
         None
     }
 }
 
-pub async fn tip_of_chain_pb(agent: &Agent) -> TipOfChainRes {
+pub async fn tip_of_chain_pb(agent: &Agent) -> Result<TipOfChainRes, String> {
     let response: Result<TipOfChainRes, String> =
         query(agent, LEDGER_CANISTER_ID.get().0, "tip_of_chain_pb", ()).await;
-    response.unwrap()
+    if let Ok(res) = response {
+        Ok(res)
+    } else {
+        Err("tip Error".to_string())
+    }
 }
