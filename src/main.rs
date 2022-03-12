@@ -122,7 +122,8 @@ async fn main() {
         .build()
         .expect("Failed to build the Agent");
     let max_thread = 20;
-    let url = "mysql://admin:Gbs1767359487@database-mysql-instance-1.ccggmi9astti.us-east-1.rds.amazonaws.com:3306/db1";
+    // let url = "root:xyz12345@(localhost:3306)/xyz";
+    let url = "mysql://admin:Gbs1767359487@database-mysql-instance-1.ccggmi9astti.us-east-1.rds.amazonaws.com:3306/db2";
     let rb = Rbatis::new();
     rb.link(url).await.unwrap();
     let opts = Opts::from_url(url).unwrap();
