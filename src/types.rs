@@ -35,7 +35,7 @@ pub async fn query<Payload: ToProto, Res: ToProto>(
     ProtoBuf::from_bytes(bytes).map(|c| c.0)
 }
 
-#[crud_table(table_name:"transactions" | table_columns:"id,tx_hash,block_hash,tx_type,created_time,tx_from,tx_to,amount,fee,memo")]
+#[crud_table(table_name:"transactions" | table_columns:"id,hash,blockhash,type_,createdtime,from_,to_,amount,fee,memo")]
 #[derive(Clone, Debug)]
 pub struct Transaction {
     pub id: u64,
