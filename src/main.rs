@@ -27,7 +27,7 @@ use std::{thread, time};
 use tokio::task::JoinHandle;
 const DEFAULT_IC_GATEWAY: &str = "https://ic0.app";
 
-pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
+pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) -> u8 {
     //     let stmt = conn.prep("INSERT INTO transactions_test (id, hash, blockhash, type_, createdtime, from_, to_, amount, fee, memo) VALUES (:id, :hash, :blockhash, :type_, :createdtime, :from_, :to_, :amount, :fee, :memo)")
     //  .unwrap();
     //     for i in 0..data.len() {
@@ -48,7 +48,13 @@ pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
     //         )
     //         .unwrap()
     //     }
-    conn.save_batch(&data, &[]).await;
+    let result = conn.save_batch(&data, &[]).await;
+    if let Ok(_) = result {
+        1
+    } else {
+        println!("insert to mysql error, {:?}, retrying...", result);
+        0
+    }
     //println!("last generated key: {}")
 }
 pub fn get_block_height(conn: &mut PooledConn) -> u64 {
@@ -61,7 +67,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
         hash: hex::encode(block.transaction.hash().into_bytes()),
         blockhash: String::from(""),
         type_: String::from(""),
-        createdtime: 0,
+        createdtime: block.transaction.created_at_time.timestamp_nanos,
         from_: String::from(""),
         to_: String::from(""),
         amount: 0,
@@ -74,7 +80,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.to_ = hex::encode(to_);
+            transaction.to_ = to_.to_hex();
             transaction.type_ = String::from("Mint");
         }
         Operation::Burn {
@@ -82,7 +88,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.from_ = hex::encode(from_);
+            transaction.from_ = from_.to_hex();
             transaction.type_ = String::from("Burn");
         }
         Operation::Transfer {
@@ -92,8 +98,8 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.from_ = hex::encode(from_);
-            transaction.to_ = hex::encode(to_);
+            transaction.from_ = from_.to_hex();
+            transaction.to_ = to_.to_hex();
             transaction.fee = fee_.get_e8s();
             transaction.type_ = String::from("Transfer");
         }
@@ -149,7 +155,12 @@ async fn main() {
     }
 
     while true {
-        let current_height = tip_of_chain_pb(&agent).await.tip_index + 1;
+        let mut current_height = 0;
+        if let Ok(h) = tip_of_chain_pb(&agent).await {
+            current_height = h.tip_index + 1;
+        } else {
+            continue;
+        }
         println!("current blocks on IC {:?}", current_height);
         while (height < current_height) {
             let set: Vec<Transaction> = Vec::new();
@@ -169,12 +180,17 @@ async fn main() {
             }
             let mut data = (*(set_arc.read().unwrap())).clone();
             let l = data.len();
-            insert_to_mysql(data, &rb).await;
-            height = height + l as u64;
-            println!("sync to {:?} blocks...", height);
             if l as u64 != num_thread {
                 println!("thread error...num not match, pre heigh {:?}", height);
+                continue;
             }
+
+            let result = insert_to_mysql(data, &rb).await;
+            if result == 0 {
+                continue;
+            }
+            height = height + l as u64;
+            println!("sync to {:?} blocks...", height);
         }
     }
     //println!("{:?}", b);
