@@ -27,7 +27,7 @@ use std::{thread, time};
 use tokio::task::JoinHandle;
 const DEFAULT_IC_GATEWAY: &str = "https://ic0.app";
 
-pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
+pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) -> u8 {
     //     let stmt = conn.prep("INSERT INTO transactions_test (id, hash, blockhash, type_, createdtime, from_, to_, amount, fee, memo) VALUES (:id, :hash, :blockhash, :type_, :createdtime, :from_, :to_, :amount, :fee, :memo)")
     //  .unwrap();
     //     for i in 0..data.len() {
@@ -48,7 +48,13 @@ pub async fn insert_to_mysql(data: Vec<Transaction>, conn: &Rbatis) {
     //         )
     //         .unwrap()
     //     }
-    conn.save_batch(&data, &[]).await;
+    let result = conn.save_batch(&data, &[]).await;
+    if let Err(err) = result {
+        println!("{:#?}", err);
+        0
+    } else {
+        1
+    }
     //println!("last generated key: {}")
 }
 pub fn get_block_height(conn: &mut PooledConn) -> u64 {
@@ -58,12 +64,12 @@ pub fn get_block_height(conn: &mut PooledConn) -> u64 {
 pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
     let mut transaction = Transaction {
         id: id,
-        hash: hex::encode(block.transaction.hash().into_bytes()),
-        blockhash: String::from(""),
-        type_: String::from(""),
-        createdtime: 0,
-        from_: String::from(""),
-        to_: String::from(""),
+        tx_hash: hex::encode(block.transaction.hash().into_bytes()),
+        block_hash: String::from(""),
+        tx_type: String::from(""),
+        created_time: 0,
+        tx_from: String::from(""),
+        tx_to: String::from(""),
         amount: 0,
         fee: 0,
         memo: block.transaction.memo.0.to_string(),
@@ -74,16 +80,16 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.to_ = hex::encode(to_);
-            transaction.type_ = String::from("Mint");
+            transaction.tx_to = hex::encode(to_);
+            transaction.tx_type = String::from("Mint");
         }
         Operation::Burn {
             from: from_,
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.from_ = hex::encode(from_);
-            transaction.type_ = String::from("Burn");
+            transaction.tx_from = hex::encode(from_);
+            transaction.tx_type = String::from("Burn");
         }
         Operation::Transfer {
             from: from_,
@@ -92,10 +98,10 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.from_ = hex::encode(from_);
-            transaction.to_ = hex::encode(to_);
+            transaction.tx_from = hex::encode(from_);
+            transaction.tx_to = hex::encode(to_);
             transaction.fee = fee_.get_e8s();
-            transaction.type_ = String::from("Transfer");
+            transaction.tx_type = String::from("Transfer");
         }
     }
     return transaction;
@@ -134,11 +140,15 @@ async fn main() {
         let b = ledger::get_blocks_pb(&agent, height, 1000).await;
         if let Some(Blocks) = b {
             let mut new_transactions: Vec<Transaction> = Vec::new();
+            let mut add_height = 0;
             for block in Blocks {
-                new_transactions.push(convert_to_mysqldata(block, height + 1));
-                height += 1;
+                new_transactions.push(convert_to_mysqldata(block, height + add_height + 1));
+                add_height += 1;
             }
-            insert_to_mysql(new_transactions, &rb).await;
+            let result = insert_to_mysql(new_transactions, &rb).await;
+            if result == 1 {
+                height += add_height;
+            }
         } else {
             println!("batch sync finish....convert to multi-thread sync");
             break;
@@ -169,8 +179,10 @@ async fn main() {
             }
             let mut data = (*(set_arc.read().unwrap())).clone();
             let l = data.len();
-            insert_to_mysql(data, &rb).await;
-            height = height + l as u64;
+            let result = insert_to_mysql(data, &rb).await;
+            if result == 1 {
+                height = height + l as u64;
+            }
             println!("sync to {:?} blocks...", height);
             if l as u64 != num_thread {
                 println!("thread error...num not match, pre heigh {:?}", height);

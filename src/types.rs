@@ -39,12 +39,12 @@ pub async fn query<Payload: ToProto, Res: ToProto>(
 #[derive(Clone, Debug)]
 pub struct Transaction {
     pub id: u64,
-    pub hash: String,
-    pub blockhash: String,
-    pub type_: String,
-    pub createdtime: u64,
-    pub from_: String,
-    pub to_: String,
+    pub tx_hash: String,
+    pub block_hash: String,
+    pub tx_type: String,
+    pub created_time: u64,
+    pub tx_from: String,
+    pub tx_to: String,
     pub amount: u64,
     pub fee: u64,
     pub memo: String,
