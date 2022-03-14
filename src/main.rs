@@ -80,7 +80,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.tx_to = hex::encode(to_);
+            transaction.tx_to = to_.to_hex();
             transaction.tx_type = String::from("Mint");
         }
         Operation::Burn {
@@ -88,7 +88,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.tx_from = hex::encode(from_);
+            transaction.tx_from = from_.to_hex();
             transaction.tx_type = String::from("Burn");
         }
         Operation::Transfer {
@@ -98,8 +98,8 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
             amount: amount_,
         } => {
             transaction.amount = amount_.get_e8s();
-            transaction.tx_from = hex::encode(from_);
-            transaction.tx_to = hex::encode(to_);
+            transaction.tx_from = from_.to_hex();
+            transaction.tx_to = to_.to_hex();
             transaction.fee = fee_.get_e8s();
             transaction.tx_type = String::from("Transfer");
         }
