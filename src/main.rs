@@ -67,7 +67,7 @@ pub fn convert_to_mysqldata(block: Block, id: u64) -> Transaction {
         tx_hash: hex::encode(block.transaction.hash().into_bytes()),
         block_hash: String::from(""),
         tx_type: String::from(""),
-        created_time: 0,
+        created_time: block.transaction.created_at_time.timestamp_nanos,
         tx_from: String::from(""),
         tx_to: String::from(""),
         amount: 0,
