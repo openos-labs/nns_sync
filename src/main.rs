@@ -129,7 +129,7 @@ async fn main() {
         .expect("Failed to build the Agent");
     let max_thread = 20;
     // let url = "root:xyz12345@(localhost:3306)/xyz";
-    let url = "mysql://admin:Gbs1767359487@database-mysql-instance-1.ccggmi9astti.us-east-1.rds.amazonaws.com:3306/db2";
+    let url = "mysql://admin:Gbs1767359487@database-mysql-instance-1.ccggmi9astti.us-east-1.rds.amazonaws.com:3306/db1";
     let rb = Rbatis::new();
     rb.link(url).await.unwrap();
     let opts = Opts::from_url(url).unwrap();
@@ -179,15 +179,18 @@ async fn main() {
             }
             let mut data = (*(set_arc.read().unwrap())).clone();
             let l = data.len();
+            if l as u64 != num_thread {
+                println!("thread error...num not match, pre heigh {:?}, skip", height);
+                continue;
+            }
             let result = insert_to_mysql(data, &rb).await;
             if result == 1 {
                 height = height + l as u64;
             }
             println!("sync to {:?} blocks...", height);
-            if l as u64 != num_thread {
-                println!("thread error...num not match, pre heigh {:?}", height);
-            }
         }
+        let two_seconds = time::Duration::from_secs(2);
+        thread::sleep(two_seconds);
     }
     //println!("{:?}", b);
 }
