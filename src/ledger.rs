@@ -92,8 +92,12 @@ pub async fn get_blocks_pb(agent: &Agent, start: u64, length: usize) -> Option<V
     }
 }
 
-pub async fn tip_of_chain_pb(agent: &Agent) -> TipOfChainRes {
+pub async fn tip_of_chain_pb(agent: &Agent) -> Result<TipOfChainRes, String> {
     let response: Result<TipOfChainRes, String> =
         query(agent, LEDGER_CANISTER_ID.get().0, "tip_of_chain_pb", ()).await;
-    response.unwrap()
+    if let Ok(result) = response {
+        Ok(result)
+    } else {
+        Err("get height error".to_string())
+    }
 }

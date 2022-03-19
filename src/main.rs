@@ -159,7 +159,15 @@ async fn main() {
     }
 
     while true {
-        let current_height = tip_of_chain_pb(&agent).await.tip_index + 1;
+        let current_height_result = tip_of_chain_pb(&agent).await;
+        let mut current_height = 0;
+        if let Err(s) = current_height_result {
+            println!("{:#?}", s);
+            continue;
+        } else {
+            current_height = current_height_result.unwrap().tip_index + 1;
+        }
+        // let current_height = tip_of_chain_pb(&agent).await.tip_index + 1;
         println!("current blocks on IC {:?}", current_height);
         while (height < current_height) {
             let set: Vec<Transaction> = Vec::new();
