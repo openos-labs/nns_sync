@@ -191,7 +191,32 @@ async fn main() {
                 println!("thread error...num not match, pre heigh {:?}, skip", height);
                 continue;
             }
+            let mut m: [i32; 20] = [-1; 20];
+            let mut flag: bool = true;
+            for transaction in &data {
+                if (transaction.id <= height || transaction.id > height + l as u64) {
+                    flag = false;
+                    continue;
+                }
+                m[(transaction.id - height - 1) as usize] = 1;
+            }
+            if (!flag) {
+                println!("idx not match...retry......, pre height {:?}", height);
+                continue;
+            }
+            for i in 0..l {
+                if (m[i] == -1) {
+                    flag = false;
+                    continue;
+                }
+            }
+            if (!flag) {
+                println!("idx miss...retry......, pre height {:?}", height);
+                continue;
+            }
+
             let result = insert_to_mysql(data, &rb).await;
+
             if result == 1 {
                 height = height + l as u64;
             }
