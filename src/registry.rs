@@ -185,7 +185,7 @@ pub async fn data_center_record(agent: &Agent) {
 pub async fn crypto_threshold_signing_pubkey(agent: &Agent) {
     let response = get_value(agent, make_crypto_threshold_signing_pubkey_key(
         SubnetId::new(PrincipalId::from_str(
-            "tdb26-jop6k-aogll-7ltgs-eruif-6kk7m-qpktf-gdiqx-mxtrf-vb5e6-eqe"
+            "gmq5v-hbozq-uui6y-o55wc-ihop3-562wb-3qspg-nnijg-npqp5-he3cj-3ae"
         ).unwrap()))).await
     .expect("routing_table_record error");
 

@@ -69,16 +69,18 @@ async fn main() {
     // registry::nns_canister_records(&agent).await;
 
     // 获取 Ledger 或者 archieve node 里面的单个 block。index 为 2599652
-    let a = ledger::block_pb(&agent, 2599652).await;
-    println!("{:?}", a);
+    // let a = ledger::block_pb(&agent, 2599652).await;
+    // println!("{:?}", a);
     
-    // 获取 archieve node 里面的多个 block，范围是 [0,1999] 共 2000 个。
-    let b  = ledger::get_blocks_pb(&agent, 0, 2000).await;
-    println!("{:?}", b);
+    // // 获取 archieve node 里面的多个 block，范围是 [0,1999] 共 2000 个。
+    // let b  = ledger::get_blocks_pb(&agent, 0, 2000).await;
+    // println!("{:?}", b);
 
-    // 获取 Ledger 最新高度
-    let c = ledger::tip_of_chain_pb(&agent).await;
-    println!("{:}", c.tip_index);
+    // // 获取 Ledger 最新高度
+    // let c = ledger::tip_of_chain_pb(&agent).await;
+    // println!("{:}", c.tip_index);
+
+    registry::crypto_threshold_signing_pubkey(&agent).await;
 }
 
 
